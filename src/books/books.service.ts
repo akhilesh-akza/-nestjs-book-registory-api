@@ -35,17 +35,26 @@ export class BooksService {
     AND
     BOOK.CATEGORY = category.id`;
 
+    const dbQueryParams = [];
+
     if (search.length != 0) {
-      queryString += ` AND BOOK.NAME ILIKE '%${search}%'`;
+      queryString += ` AND BOOK.NAME ILIKE $${dbQueryParams.length + 1} `;
+      dbQueryParams.push(`%${search}%`);
     }
     if (!isNaN(parseInt(authorId)) || authorId.toLowerCase() != 'null') {
-      queryString += ` AND BOOK.AUTHOR = ${authorId}`;
+      queryString += ` AND BOOK.AUTHOR = $${dbQueryParams.length + 1}`;
+      dbQueryParams.push(parseInt(authorId));
     }
     if (!isNaN(parseInt(categoryId)) || categoryId.toLowerCase() != 'null') {
-      queryString += ` AND BOOK.CATEGORY = ${categoryId}`;
+      queryString += ` AND BOOK.CATEGORY = $${dbQueryParams.length + 1}`;
+      dbQueryParams.push(parseInt(categoryId));
     }
     queryString += ';';
-    const books = await this.bookRepository.query(queryString);
+    console.log(queryString, dbQueryParams);
+    const books = await this.bookRepository.query(
+      queryString + ';',
+      dbQueryParams,
+    );
 
     if (books.length === 0) {
       throw new HttpException('0 books found', HttpStatus.NOT_FOUND);
