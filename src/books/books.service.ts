@@ -37,18 +37,19 @@ export class BooksService {
     }
   }
 
-  // This is so ugly and unsafe to write raw SQL, TypeORM Docs are horrible.
+  // This is so ugly and ruins the aesthetics, TypeORM Docs are horrible.
 
   async findAll({ search, authorId, categoryId }: FilterBookDto) {
     let queryString = `SELECT BOOK.ID AS ID, BOOK.NAME AS Name,AUTHOR.ID as AuthorID,
-     AUTHOR.NAME AS Author,
-     CATEGORY.ID AS CategoryID,
+      AUTHOR.NAME AS Author,
+      CATEGORY.ID AS CategoryID,
       CATEGORY.NAME AS Category,
-       BOOK.DESCRIPTION FROM BOOK, AUTHOR, CATEGORY
-    WHERE
-    BOOK.AUTHOR = author.id
-    AND
-    BOOK.CATEGORY = category.id`;
+      BOOK.DESCRIPTION AS Description
+      FROM BOOK, AUTHOR, CATEGORY
+      WHERE
+      BOOK.AUTHOR = author.id
+      AND
+      BOOK.CATEGORY = category.id`;
 
     const dbQueryParams = [];
 
@@ -65,7 +66,7 @@ export class BooksService {
       dbQueryParams.push(parseInt(categoryId));
     }
     queryString += ';';
-    console.log(queryString, dbQueryParams);
+    // console.log(queryString, dbQueryParams);
     const books = await this.bookRepository.query(queryString, dbQueryParams);
 
     if (books.length === 0) {
