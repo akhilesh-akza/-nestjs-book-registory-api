@@ -19,11 +19,11 @@ export class Book {
   @Column({ type: 'text' })
   description: string;
 
-  @ManyToOne(() => Author)
+  @ManyToOne(() => Author, { eager: true })
   @JoinColumn([{ name: 'author', referencedColumnName: 'id' }])
   author: number;
 
-  @ManyToOne(() => Category)
+  @ManyToOne(() => Category, { eager: true })
   @JoinColumn([{ name: 'category', referencedColumnName: 'id' }])
   category: number;
 }
